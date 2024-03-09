@@ -14,15 +14,17 @@ export class AuthMiddleware implements NestMiddleware {
     if (token) {
       try {
         const decoded = jwt.verify(token, 'leda');
-        console.log(decoded);
-
         req.user = decoded;
         next();
       } catch (error) {
-        res.status(401).json({ message: 'Invalid token' });
+        res
+          .status(401)
+          .json({ code: 401, info: '无效Token', msg: '无效Token' });
       }
     } else {
-      res.status(401).json({ message: 'Token not provided' });
+      res
+        .status(401)
+        .json({ code: 401, info: '未获取到token', msg: '未获取到token' });
     }
   }
 }

@@ -1,11 +1,20 @@
-import { Body, Controller, Get, Headers, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { AddUserDto } from './dto/add-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import * as randomstring from 'randomstring';
 import * as NodeCache from 'node-cache';
 import * as jwt from 'jsonwebtoken';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 //全局缓存实例
 const cache = new NodeCache();
@@ -77,6 +86,15 @@ export class UserController {
     let code: string = randomstring.generate(6);
     cache.set(email, code, 300); //五分钟有效
     await this.userService.sendCode(email, code);
-    return '发送成功';
+    return { code: 0, info: '发送成功' };
+  }
+
+  @Patch('updateUserInfo')
+  @ApiBody({
+    type: UpdateUserDto,
+  })
+  async updateUserInfo(@Body() requestBody: { id: number; username: string }) {
+    const { id, username } = requestBody;
+    return this.userService.updateUserInfoService(id, username);
   }
 }

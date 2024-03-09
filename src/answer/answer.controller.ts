@@ -3,14 +3,9 @@ import {
   Get,
   Post,
   Body,
-  Patch,
-  Param,
-  Delete,
   Query,
 } from '@nestjs/common';
 import { AnswerService } from './answer.service';
-import { CreateAnswerDto } from './dto/create-answer.dto';
-import { UpdateAnswerDto } from './dto/update-answer.dto';
 import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AddAnswerDto } from './dto/add-answer.dto';
 import { EntityManager } from 'typeorm';
@@ -28,8 +23,6 @@ export class AnswerController {
   @Get('statByQuestionId')
   @ApiQuery({ name: 'questionId', required: false, type: Number })
   @ApiQuery({ name: 'answerKey', required: false, type: String })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'pageSize', required: false, type: Number })
   async statByQuestionId(
     @Query('questionId') questionId: number,
     @Query('answerKey') answerKey: string,
@@ -63,15 +56,29 @@ export class AnswerController {
 
   //根据问卷id查询提交列表
   @Get('getSubmitList')
+  @ApiQuery({ name: 'searchKey', required: false, type: String })
   async getSubmitList(
     @Query('qId') qId: number,
     @Query('page') page: number,
     @Query('pageSize') pageSize: number,
+    @Query('searchKey') searchKey: string,
   ) {
     return await this.answerService.getSubmitListService({
       qId,
       page,
       pageSize,
+      searchKey,
     });
+  }
+
+  @Get('getUserAnswer')
+  async getUserAnswer(
+    @Query('userId') userId: number,
+    @Query('questionnaireId') questionaireId: number,
+  ) {
+    return await this.answerService.getUserAnswerService(
+      userId,
+      questionaireId,
+    );
   }
 }

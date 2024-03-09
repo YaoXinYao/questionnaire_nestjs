@@ -104,8 +104,24 @@ export class UserService {
         return { code: -1, info: '登录失败' };
       }
     } catch (error) {
-      console.error('登录出错', error);
       return { code: -1, info: '登录出错' };
+    }
+  }
+
+  async updateUserInfoService(id: number, username: string) {
+    try {
+      console.log(id, username);
+
+      let res = await this.usersRepository.update(id, { username });
+      console.log(res);
+
+      if (res.affected >= 1) {
+        return { code: 0, info: '修改成功' };
+      } else {
+        return { code: -1, info: '修改失败' };
+      }
+    } catch (error) {
+      return { code: -1, info: '修改失败' };
     }
   }
 
