@@ -72,7 +72,7 @@ export class UserController {
   login(@Body() loginUserDto: LoginUserDto) {
     let { code, email = '' } = loginUserDto;
     let myCode = cache.get(email);
-
+    code = code.toUpperCase();
     if (myCode != code || !code) {
       return { code: -1, info: '登录失败，验证码错误' };
     }
@@ -84,7 +84,7 @@ export class UserController {
   @Get('sendCode')
   async sendCode(@Query('email') email: string) {
     let code: string = randomstring.generate(6);
-    cache.set(email, code, 300); //五分钟有效
+    cache.set(email, code.toUpperCase(), 300); //五分钟有效
     await this.userService.sendCode(email, code);
     return { code: 0, info: '发送成功' };
   }

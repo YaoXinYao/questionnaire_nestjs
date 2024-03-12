@@ -138,10 +138,13 @@ export class AnswerService {
     searchKey,
   }): Promise<ServiceReturnType> {
     try {
+      console.log('查询：', qId, page, pageSize, searchKey);
+
       const queryBuilder = this.answerUserRepository
-        .createQueryBuilder('answer')
-        .innerJoinAndSelect('answer.user', 'user')
-        .where('answer.qId = :qId', { qId });
+        .createQueryBuilder('answerUser')
+        .leftJoinAndSelect('answerUser.user', 'user')
+        .leftJoinAndSelect('answerUser.answers', 'answer')
+        .where('answerUser.qId = :qId', { qId });
 
       if (searchKey) {
         queryBuilder.andWhere(
@@ -161,6 +164,8 @@ export class AnswerService {
       const currentPage = page || 1;
       const count = data.length;
 
+      console.log(data);
+
       return {
         code: 0,
         info: { data, total, totalPages, currentPage, count },
@@ -170,6 +175,27 @@ export class AnswerService {
       return { code: -1, info: '查询失败' };
     }
   }
+
+  // async getSubmitListService({
+  //   qId,
+  //   page,
+  //   pageSize,
+  //   searchKey,
+  // }): Promise<ServiceReturnType> {
+  //   try {
+  //     const res = await this.answerRepository.find({
+  //       where: {
+  //         answer: Like(`%${searchKey}%`),
+  //       },
+  //     });
+  //     console.log(res);
+
+  //     return { code: 0, info: res };
+  //   } catch (error) {
+  //     console.error(error);
+  //     return { code: -1, info: '查询失败' };
+  //   }
+  // }
 
   async getUserAnswerService(userId: number, questionnaireId: number) {
     try {

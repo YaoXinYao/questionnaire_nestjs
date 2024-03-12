@@ -22,7 +22,7 @@ async function bootstrap() {
   //3.设置'/api'路由为swagger文档及其UI主页
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(3001);
+  await app.listen(9000);
   //请求失败过滤器
   app.useGlobalFilters(new HttpExceptionFilter());
   //请求成功拦截器。用于整个应用，用于每个控制器和每个路由处理程序

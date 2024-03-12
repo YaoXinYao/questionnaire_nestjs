@@ -1,9 +1,12 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
+import { AuthService } from 'src/auth/auth.service';
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
+  constructor(private readonly authService: AuthService) {}
+
   NOTVARIFYPATH = ['/user/login', '/user/addUser', '/user/sendCode'];
-  use(req: any, res: any, next: (error?: any) => void) {
+  async use(req: any, res: any, next: (error?: any) => void) {
     const path = req.originalUrl.split('?')[0];
     if (this.NOTVARIFYPATH.indexOf(path) >= 0) {
       return next();
@@ -13,10 +16,12 @@ export class AuthMiddleware implements NestMiddleware {
 
     if (token) {
       try {
-        const decoded = jwt.verify(token, 'leda');
+        const decoded = await this.authService.verifyToken(token);
         req.user = decoded;
         next();
       } catch (error) {
+        console.log(error);
+
         res
           .status(401)
           .json({ code: 401, info: '无效Token', msg: '无效Token' });

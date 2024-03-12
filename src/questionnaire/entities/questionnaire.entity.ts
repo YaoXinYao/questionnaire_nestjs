@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Question } from './question.entity';
+import { AnswerUser } from 'src/answer/entities/answerUser.entity';
 
 @Entity()
 export class Questionnaire {
@@ -38,4 +39,7 @@ export class Questionnaire {
 
   @OneToMany(()=>Question,question=>question.questionnaire)
   questions:Question[]
+
+  @OneToMany(() => AnswerUser, answerUser => answerUser.questionnaire)
+  answerUsers: AnswerUser[];
 }

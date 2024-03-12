@@ -3,9 +3,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Questionnaire } from './questionnaire.entity';
+import { Answer } from 'src/answer/entities/answer.entity';
 
 @Entity()
 export class Question {
@@ -39,6 +41,11 @@ export class Question {
   @ManyToOne(() => Questionnaire, (questionnaire) => questionnaire.questions, {
     onDelete: 'CASCADE',
   })
+  
   @JoinColumn({ name: 'qId' })
   questionnaire: Questionnaire;
+
+  @OneToMany(() => Answer, answer => answer.question, { cascade: true })
+  answers: Answer[];
 }
+ 

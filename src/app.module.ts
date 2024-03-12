@@ -9,6 +9,7 @@ import { HttpInterceptorInterceptor } from './interceptor/http-intercetor/http-i
 import { QuestionnaireModule } from './questionnaire/questionnaire.module';
 import { AnswerModule } from './answer/answer.module';
 import { AuthMiddleware } from './auth/AuthMiddleware';
+import { AuthService } from './auth/auth.service';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { AuthMiddleware } from './auth/AuthMiddleware';
       useClass: HttpInterceptorInterceptor,
     },
     AppService,
+    AuthService,
   ],
 })
 export class AppModule implements NestMiddleware {

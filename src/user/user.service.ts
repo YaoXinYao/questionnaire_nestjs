@@ -110,11 +110,7 @@ export class UserService {
 
   async updateUserInfoService(id: number, username: string) {
     try {
-      console.log(id, username);
-
       let res = await this.usersRepository.update(id, { username });
-      console.log(res);
-
       if (res.affected >= 1) {
         return { code: 0, info: '修改成功' };
       } else {
@@ -134,4 +130,10 @@ export class UserService {
     };
     await this.transporter.sendMail(mailOptions);
   }
+
+  //退出登录
+  // async logoutService(token: string) {
+  //   this.authService.addBlackList(token);
+  //   return { code: 0, info: '退出成功' };
+  // }
 }
