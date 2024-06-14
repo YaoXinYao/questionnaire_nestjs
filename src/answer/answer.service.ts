@@ -126,7 +126,6 @@ export class AnswerService {
     } catch (error) {
       // 如果抛出异常，表示保存失败
       console.error(error);
-
       return { code: -1, message: '保存失败' };
     }
   }
@@ -138,8 +137,6 @@ export class AnswerService {
     searchKey,
   }): Promise<ServiceReturnType> {
     try {
-      console.log('查询：', qId, page, pageSize, searchKey);
-
       const queryBuilder = this.answerUserRepository
         .createQueryBuilder('answerUser')
         .leftJoinAndSelect('answerUser.user', 'user')
@@ -148,7 +145,7 @@ export class AnswerService {
 
       if (searchKey) {
         queryBuilder.andWhere(
-          '(user.username LIKE :searchKey OR answer.answer LIKE :searchKey)',
+          '(user.username LIKE :searchKey OR user.email LIKE :searchKey)',
           {
             searchKey: `%${searchKey}%`,
           },
@@ -163,9 +160,6 @@ export class AnswerService {
       const totalPages = Math.ceil(total / pageSize);
       const currentPage = page || 1;
       const count = data.length;
-
-      console.log(data);
-
       return {
         code: 0,
         info: { data, total, totalPages, currentPage, count },

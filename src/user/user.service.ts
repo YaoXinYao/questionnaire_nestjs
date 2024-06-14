@@ -96,6 +96,7 @@ export class UserService {
       const res = await this.usersRepository.findOneBy({
         email: user.email,
       });
+
       //生成token
       const token = this.authService.generateToken({ ...res });
       if (res) {
@@ -104,6 +105,8 @@ export class UserService {
         return { code: -1, info: '登录失败' };
       }
     } catch (error) {
+      console.error(error);
+
       return { code: -1, info: '登录出错' };
     }
   }

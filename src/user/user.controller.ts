@@ -15,6 +15,7 @@ import * as randomstring from 'randomstring';
 import * as NodeCache from 'node-cache';
 import * as jwt from 'jsonwebtoken';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthService } from 'src/auth/auth.service';
 
 //全局缓存实例
 const cache = new NodeCache();
@@ -23,7 +24,10 @@ const cache = new NodeCache();
 @ApiBearerAuth() //token鉴权
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Get('code')
   async code(@Query('email') email: string) {
@@ -42,6 +46,7 @@ export class UserController {
     if (isExist.code == 0) {
       return { code: -1, info: '注册失败，该邮箱已存在' };
     } else {
+      cache.del(email);
       return { code: 0, info: this.userService.addUser({ email, username }) };
     }
   }
@@ -76,7 +81,7 @@ export class UserController {
     if (myCode != code || !code) {
       return { code: -1, info: '登录失败，验证码错误' };
     }
-
+    cache.del(email);
     return this.userService.login(loginUserDto);
   }
 
@@ -96,5 +101,17 @@ export class UserController {
   async updateUserInfo(@Body() requestBody: { id: number; username: string }) {
     const { id, username } = requestBody;
     return this.userService.updateUserInfoService(id, username);
+  }
+
+  //退出登陆
+  @Post('logout')
+  async logout(@Headers() headers) {
+    try {
+      const token = headers.authorization.split(' ')[1];
+      this.authService.addBlackList(token);
+      return { code: 0, info: '退出成功' };
+    } catch (error) {
+      return { code: -1, info: '退出失败' };
+    }
   }
 }
